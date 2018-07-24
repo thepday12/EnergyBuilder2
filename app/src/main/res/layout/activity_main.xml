@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context=".view.MainActivity">
+
+
+
+
+        <LinearLayout
+            android:id="@+id/llContent"
+            android:layout_marginLeft="@dimen/margin_lr"
+            android:layout_marginRight="@dimen/margin_lr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"  android:orientation="vertical" android:layout_centerInParent="true">
+            <Button
+                android:id="@+id/btRoutes"
+                android:layout_width="match_parent"
+                android:layout_height="96dp"
+                android:background="@drawable/button_bg"
+                android:text="ROUTES"
+                android:textColor="@color/black"
+                />
+            <Button
+                android:id="@+id/btDownload"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/button_bg"
+                android:text="DOWNLOAD DATA"
+                android:textColor="@color/black"
+                />
+            <Button
+                android:id="@+id/btUpload"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/button_bg"
+                android:text="UPLOAD DATA"
+                android:textColor="@color/black"
+                />
+            <Button
+                android:id="@+id/btClear"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/button_bg"
+                android:text="CLEAR DATA"
+                android:textColor="@color/black"
+                /><Button
+                android:id="@+id/btSettings"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/button_bg"
+                android:text="SETTINGS"
+                android:textColor="@color/black"
+                /><Button
+                android:id="@+id/btLogin"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/button_bg"
+                android:text="LOGIN"
+                android:textColor="@color/black"
+                />
+        </LinearLayout>
+    <TextView
+        android:id="@+id/tvHeader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="DATA CAPTURE"
+        android:textColor="@color/black"
+        android:layout_above="@+id/llContent"
+        android:textSize="18dp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tvFooter"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:text="EnergyBuilder Data Capture powered by eDataViz"
+        android:textSize="12dp"
+        android:layout_marginBottom="10dp"/>
+
+</RelativeLayout>

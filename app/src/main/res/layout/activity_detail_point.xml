@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/margin_lr"
+    tools:context=".view.PointsActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/llButton"
+        />
+    <LinearLayout
+        android:layout_marginTop="16dp"
+        android:id="@+id/llButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" android:orientation="vertical">
+    <Button
+        android:id="@+id/btCompletePoint"
+        android:text="COMPLETE POINT"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/button_bg"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"/>
+        <Button
+            android:layout_marginTop="8dp"
+        android:id="@+id/btResetRoute"
+        android:text="RESET POINT"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/button_bg"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"/>
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">EnergyBuilder</string>
+    <string name="routes_label">Routes</string>
+    <string name="setting_label">Settings</string>
+    <string name="login_label">Login</string>
+    <string name="loading_title">Loading..</string>
+</resources>
