@@ -6,15 +6,29 @@ android {
         applicationId "edv2.energybuilder"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 5
+        versionName "2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        config {
+            keyAlias 'key0'
+            keyPassword 'koko12'
+            storeFile file('/Users/theptokim/Desktop/key_energybuilder')
+            storePassword 'koko12'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.config
         }
+//        debug {
+//            debuggable true
+//            signingConfig signingConfigs.config
+//        }
     }
 
     allprojects {
@@ -22,6 +36,8 @@ android {
             maven { url 'https://jitpack.io' }
         }
     }
+
+
 }
 
 dependencies {

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -104,14 +105,19 @@ public class ObjectFieldAdapter extends RecyclerView
         final ObjectField object = mDataset.get(position);
 
         holder.tvTitle.setText(object.getName());
-        Log.e("VLLL",object.getName()+":"+object.getValue());
+        holder.tvTitle.setTextColor(Color.BLACK);
+        holder.tvTitle.setOnClickListener(null);
         if(object.getControlType().equals("n")){
 
 
             holder.etField.setVisibility(View.VISIBLE);
             holder.spinnerField.setVisibility(View.INVISIBLE);
             holder.rlDate.setVisibility(View.INVISIBLE);
-            holder.etField.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+            holder.etField.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            InputFilter[] filterArray = new InputFilter[1];
+            filterArray[0] = new InputFilter.LengthFilter(12);
+
+            holder.etField.setFilters(filterArray);
             holder.tvTitle.setTextColor(Color.parseColor("#2196F3"));
 
             holder.etField.setText(object.getValue());

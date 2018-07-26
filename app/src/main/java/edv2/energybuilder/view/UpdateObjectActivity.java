@@ -136,17 +136,7 @@ public class UpdateObjectActivity extends BaseActivity {
         btReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for(ObjectField field:fields){
-                    field.setValue("");
-                }
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
-                } catch (JSONException e) {
-
-                }
-                objectFieldAdapter.notifyItemRangeChanged(0,fields.size());
-
+              resetAllField();
             }
         });
 
@@ -183,7 +173,6 @@ public class UpdateObjectActivity extends BaseActivity {
                             jsonObject.put("object_details", jsonObjectDetail);
                             mySharedPreferences.setDataConfig(jsonObject.toString());
                             Toast.makeText(UpdateObjectActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
-                            finish();
                         }
                     } catch (JSONException e) {
 
@@ -205,6 +194,29 @@ public class UpdateObjectActivity extends BaseActivity {
                 getObjectStruct();
             }
         });
+    }
+
+    private void resetAllField() {
+        resetAllField(0);
+    }
+    private void resetAllField(int start) {
+
+        for(int i =start;i<fields.size();i++){
+            ObjectField field = fields.get(i);
+            field.setValue("");
+        }
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
+        } catch (JSONException e) {
+
+        }
+        try {
+            objectFieldAdapter.notifyItemRangeChanged(0, fields.size());
+        }catch (Exception e){
+
+        }
+
     }
 
     private void getObjectStruct(){
@@ -283,23 +295,27 @@ public class UpdateObjectActivity extends BaseActivity {
 
             //Du lieu da luu tru
             JSONObject jsonObjectDetail = jsonObject.getJSONObject("object_details");
+            JSONObject object = null;
             try {
-                JSONObject object = jsonObjectDetail.getJSONObject(getCurrentKey());
-                if(object!=null){
-                    for(int i =1;i<fields.size();i++){
-                        ObjectField field = fields.get(i);
-                        String value = "";
-                        try{
-                            value =  object.getString(field.getKey());
+                 object = jsonObjectDetail.getJSONObject(getCurrentKey());
 
-                        }catch (Exception e){
-
-                        }
-                        field.setValue(value);
-                    }
-                }
             }catch (Exception e){
 
+            }
+            if(object!=null){
+                for(int i =1;i<fields.size();i++){
+                    ObjectField field = fields.get(i);
+                    String value = "";
+                    try{
+                        value =  object.getString(field.getKey());
+
+                    }catch (Exception e){
+
+                    }
+                    field.setValue(value);
+                }
+            }else{
+                resetAllField(1);
             }
         } catch (JSONException e) {
             e.printStackTrace();
