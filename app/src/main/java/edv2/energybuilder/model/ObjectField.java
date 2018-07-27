@@ -25,7 +25,8 @@ public class ObjectField {
     private List<String> list = new ArrayList<>();
     private List<EventPhase> eventPhases = new ArrayList<>();
 
-    public ObjectField(String name, String dataType, String controlType) {
+    public ObjectField(String key,String name, String dataType, String controlType) {
+        this.key = key;
         this.name = name;
         this.dataType = dataType;
         this.controlType = controlType;
@@ -40,12 +41,12 @@ public class ObjectField {
      * @param eventPhases list du lieu day du
      * @param list list du lieu hien thi
      */
-    public ObjectField(String name, String dataType, String controlType,List<EventPhase> eventPhases,List<String> list) {
+    public ObjectField(String key,String name, String dataType, String controlType,List<EventPhase> eventPhases,List<String> list) {
+        this.key = key;
         this.name = name;
         this.dataType = dataType;
         this.controlType = controlType;
         this.enable = true;
-        this.mandatory = true;
         this.eventPhases = eventPhases;
         this.list = list;
     }

@@ -205,7 +205,7 @@ public class ObjectFieldAdapter extends RecyclerView
                             String value = i+"-"+MyUtils.formatDateNumber(i1+1)+"-"+MyUtils.formatDateNumber(i2);
                             holder.tvDateField.setText(value);
                             object.setValue(value);
-                            int p  = getPosition(object);
+                            int p  = getPosition(object,0);
                             mDataset.set(p,object);
                             updateFieldListener.changeValue(p,object);
                         }
@@ -217,13 +217,20 @@ public class ObjectFieldAdapter extends RecyclerView
             holder.etField.setVisibility(View.INVISIBLE);
             holder.spinnerField.setVisibility(View.VISIBLE);
             holder.rlDate.setVisibility(View.INVISIBLE);
-
+            String value = object.getValue();
+            List<String> list = object.getList();
             holder.spinnerField.setItems(object.getList());
+            for(int i=0;i<list.size();i++){
+                if(list.get(i).equals(value)){
+                    holder.spinnerField.setSelectedIndex(i);
+                    break;
+                }
+            }
             holder.spinnerField.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
 
                 @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                     object.setValue(item);
-                    int p  = getPosition(object);
+                    int p  = getPosition(object,position);
                     mDataset.set(p,object);
                     updateFieldListener.changeValue(p,object);
                 }
@@ -322,12 +329,14 @@ public class ObjectFieldAdapter extends RecyclerView
         return mDataset.size();
     }
 
-    private int getPosition(ObjectField object){
-        int position = 0;
-        for(int i = 0; i<mDataset.size();i++){
-            if(object.getKey().equals(mDataset.get(i).getKey())){
-                position = i;
-                break;
+    private int getPosition(ObjectField object,int position){
+        String key = object.getKey();
+        if(!key.isEmpty()) {
+            for (int i = 0; i < mDataset.size(); i++) {
+                if (key.equals(mDataset.get(i).getKey())) {
+                    position = i;
+                    break;
+                }
             }
         }
         return position;

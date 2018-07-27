@@ -197,10 +197,10 @@ public class UpdateObjectActivity extends BaseActivity {
     }
 
     private void resetAllField() {
+        currentEventPhasePosition = 0;
         resetAllField(0);
     }
     private void resetAllField(int start) {
-
         for(int i =start;i<fields.size();i++){
             ObjectField field = fields.get(i);
             field.setValue("");
@@ -212,7 +212,7 @@ public class UpdateObjectActivity extends BaseActivity {
 
         }
         try {
-            objectFieldAdapter.notifyItemRangeChanged(0, fields.size());
+            objectFieldAdapter.notifyItemRangeChanged(start, fields.size()-start);
         }catch (Exception e){
 
         }
@@ -232,7 +232,7 @@ public class UpdateObjectActivity extends BaseActivity {
 
 
             //add Occur date
-            fields.add(new ObjectField("Occur date","d","d"));
+            fields.add(new ObjectField("occur_date","Occur date","d","d"));
             if(type.equals("EU")){
                 //Lay thong tin de tao name cho event_phase
                 JSONObject jsonEvent = jsonList.getJSONObject("CODE_EVENT_TYPE");
@@ -273,7 +273,7 @@ public class UpdateObjectActivity extends BaseActivity {
                 }
 
                 //Neu la EU add rieng operation
-                fields.add(new ObjectField("Operation","l","l",eventPhases,visibleList));
+                fields.add(new ObjectField("operation","Operation","l","l",eventPhases,visibleList));
             }
 
             //add cac field trong object_attrs
@@ -281,6 +281,7 @@ public class UpdateObjectActivity extends BaseActivity {
                 fields.add(new ObjectField(jsonType.getJSONObject(i),jsonList));
             }
             //Cap nhat value cho cac field
+            updateFieldValue(jsonObject,0);
             updateValue();
 
 
@@ -288,22 +289,21 @@ public class UpdateObjectActivity extends BaseActivity {
 
         }
     }
-    private void updateValue(){
-        JSONObject jsonObject = new JSONObject();
-        try {
-             jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
 
+    private void updateFieldValue(JSONObject jsonObject, int resetFromPosition){
+        try {
+            resetFromPosition+=1;
             //Du lieu da luu tru
             JSONObject jsonObjectDetail = jsonObject.getJSONObject("object_details");
             JSONObject object = null;
             try {
-                 object = jsonObjectDetail.getJSONObject(getCurrentKey());
+                object = jsonObjectDetail.getJSONObject(getCurrentKey());
 
             }catch (Exception e){
 
             }
             if(object!=null){
-                for(int i =1;i<fields.size();i++){
+                for(int i =resetFromPosition;i<fields.size();i++){
                     ObjectField field = fields.get(i);
                     String value = "";
                     try{
@@ -314,18 +314,44 @@ public class UpdateObjectActivity extends BaseActivity {
                     }
                     field.setValue(value);
                 }
+                try {
+                    objectFieldAdapter.notifyItemRangeChanged(resetFromPosition, fields.size() - resetFromPosition);
+                }catch (Exception e){
+
+                }
             }else{
-                resetAllField(1);
+
+                resetAllField(resetFromPosition);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+    private void updateValue(){
+        JSONObject tmp = new JSONObject();
+        try {
+            tmp = new JSONObject(mySharedPreferences.getDataConfig());
+        } catch (JSONException e) {
+        }
+        final JSONObject jsonObject = tmp;
         objectFieldAdapter = new ObjectFieldAdapter(this,jsonObject, currentObjectId,fields, new UpdateFieldListener() {
             @Override
             public void changeValue(int position, ObjectField objectField) {
                 fields.set(position,objectField);
                 if(position==0){
-                    updateValue();
+                    updateFieldValue(jsonObject,position);
+                    currentEventPhasePosition = 0;
+                }else if(type.equals("EU")&&position==1){
+                    //Neu La EU thi xac dinh vi tri
+                    String value = objectField.getValue();
+                    List<EventPhase> eventPhases = objectField.getEventPhases();
+                    for(int i=0;i<eventPhases.size();i++){
+                        EventPhase eventPhase = eventPhases.get(i);
+                        if(eventPhase.getName().equals(value)){
+                            currentEventPhasePosition = i;
+                        }
+                    }
+                    updateFieldValue(jsonObject,position);
                 }
             }
         });
