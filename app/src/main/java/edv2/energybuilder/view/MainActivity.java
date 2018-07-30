@@ -1,6 +1,7 @@
 package edv2.energybuilder.view;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -77,7 +78,13 @@ public class MainActivity extends BaseActivity {
         btClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mySharedPreferences.clearData();
+                if(!mySharedPreferences.getDataConfig().isEmpty()) {
+                    showDialogConfirm("Warning", "Do you really want clear all offline data?", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            mySharedPreferences.clearData();
+                        }
+                    });
+                }
             }
         });
 

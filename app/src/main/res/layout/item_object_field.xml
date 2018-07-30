@@ -17,13 +17,15 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="48dp">
 
         <com.jaredrummler.materialspinner.MaterialSpinner
             android:id="@+id/spinnerField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"
             android:visibility="invisible"/>
 
         <EditText
@@ -32,6 +34,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/edittext_bg"
             android:inputType=""
+            android:layout_centerVertical="true"
             android:visibility="invisible"/>
 
         <RelativeLayout
@@ -39,6 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/date_bg"
+            android:layout_centerVertical="true"
             android:clickable="true"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"

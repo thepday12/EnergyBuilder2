@@ -207,7 +207,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         }
         if(!objectDetails.equals(defaultValue)){
-            requestUploadData(objectDetails);
+            final String tmp = objectDetails;
+            showDialogConfirm("Warning", "All your offline data will replace server's data if exists. Do you really want to continue?", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    requestUploadData(tmp);
+                }
+            });
+
         }
 
 

@@ -280,8 +280,10 @@ public class ObjectFieldAdapter extends RecyclerView
 //        lineChart.setDesc("");
         lineChart.getXAxis().setSpaceMin(0.2f);
         lineChart.getXAxis().setSpaceMax(0.2f);
-        lineChart.getAxisLeft().setSpaceTop(0.2f);
+        lineChart.getAxisLeft().setSpaceTop(0.4f);
         lineChart.getAxisLeft().setSpaceBottom(0.2f);
+        lineChart.getAxisRight().setSpaceTop(0.4f);
+        lineChart.getAxisRight().setSpaceBottom(0.2f);
         lineChart.getXAxis().setGranularity(1f);
         lineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         lineChart.getLegend().setEnabled(false);
