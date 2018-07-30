@@ -41,7 +41,9 @@ import java.util.List;
 
 import edv2.energybuilder.R;
 import edv2.energybuilder.model.ObjectField;
+import edv2.energybuilder.model.ObjectList;
 import edv2.energybuilder.model.ValueAndDate;
+import edv2.energybuilder.utils.MySharedPreferences;
 import edv2.energybuilder.utils.MyUtils;
 import edv2.energybuilder.utils.StringDateComparator;
 
@@ -54,17 +56,17 @@ public class ObjectFieldAdapter extends RecyclerView
     private UpdateFieldListener updateFieldListener;
     private Gson gson = new Gson();
     private String objectId;
-    private JSONObject jsonObject;
+    private MySharedPreferences mySharedPreferences;
 
 
 
-    public ObjectFieldAdapter(Activity activity, JSONObject jsonObject, String objectId, List<ObjectField> dataset, UpdateFieldListener updateFieldListener) {
+    public ObjectFieldAdapter(Activity activity,  String objectId, List<ObjectField> dataset, UpdateFieldListener updateFieldListener) {
         mActivity = activity;
         this.mContext = mActivity.getBaseContext();
         this.updateFieldListener= updateFieldListener;
-        this.jsonObject = jsonObject;
         this.objectId =objectId;
         mDataset = dataset;
+        mySharedPreferences = new MySharedPreferences(mContext);
     }
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder {
@@ -128,7 +130,7 @@ public class ObjectFieldAdapter extends RecyclerView
                 @Override
                 public void onClick(View view) {
                     try {
-                        JSONObject jsonObjectDetails = jsonObject.getJSONObject("object_details");
+                        JSONObject jsonObjectDetails = new JSONObject(mySharedPreferences.getDataConfig()).getJSONObject("object_details");
                         Iterator<String> keys = jsonObjectDetails.keys();
                         List<ValueAndDate> valueAndDates = new ArrayList<>();
                         ArrayList yVals = new ArrayList<>();
@@ -218,10 +220,14 @@ public class ObjectFieldAdapter extends RecyclerView
             holder.spinnerField.setVisibility(View.VISIBLE);
             holder.rlDate.setVisibility(View.INVISIBLE);
             String value = object.getValue();
-            List<String> list = object.getList();
-            holder.spinnerField.setItems(object.getList());
-            for(int i=0;i<list.size();i++){
-                if(list.get(i).equals(value)){
+            List<ObjectList> objectLists =object.getList();
+            List<String> list = new ArrayList<>();
+            for(ObjectList objectList: object.getList()){
+                list.add(objectList.getName());
+            }
+            holder.spinnerField.setItems(list);
+            for(int i=0;i<objectLists.size();i++){
+                if(objectLists.get(i).getId().equals(value)){
                     holder.spinnerField.setSelectedIndex(i);
                     break;
                 }
@@ -229,7 +235,12 @@ public class ObjectFieldAdapter extends RecyclerView
             holder.spinnerField.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
 
                 @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
-                    object.setValue(item);
+                    for(ObjectList objectList:object.getList()) {
+                        if(objectList.getName().equals(item)) {
+                            object.setValue(objectList.getId());
+                            break;
+                        }
+                    }
                     int p  = getPosition(object,position);
                     mDataset.set(p,object);
                     updateFieldListener.changeValue(p,object);

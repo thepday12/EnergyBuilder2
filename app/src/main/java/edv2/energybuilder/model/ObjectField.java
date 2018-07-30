@@ -22,7 +22,7 @@ public class ObjectField {
     private boolean enable = false;
     private boolean mandatory = false;
     private String value = "";
-    private List<String> list = new ArrayList<>();
+    private List<ObjectList> list = new ArrayList<>();
     private List<EventPhase> eventPhases = new ArrayList<>();
 
     public ObjectField(String key,String name, String dataType, String controlType) {
@@ -39,16 +39,19 @@ public class ObjectField {
      * @param dataType
      * @param controlType
      * @param eventPhases list du lieu day du
-     * @param list list du lieu hien thi
      */
-    public ObjectField(String key,String name, String dataType, String controlType,List<EventPhase> eventPhases,List<String> list) {
+    public ObjectField(String key,String name, String dataType, String controlType,List<EventPhase> eventPhases) {
         this.key = key;
         this.name = name;
         this.dataType = dataType;
         this.controlType = controlType;
         this.enable = true;
         this.eventPhases = eventPhases;
-        this.list = list;
+        List<ObjectList> tmpLists = new ArrayList<>();
+        for(EventPhase eventPhase:eventPhases){
+            tmpLists.add(new ObjectList(eventPhase.getPhaseEvent(),eventPhase.getName()));
+        }
+        this.list = tmpLists;
     }
 
     /***
@@ -82,7 +85,7 @@ public class ObjectField {
                 while (keys.hasNext()) {
                     String key = keys.next();
                     String value = json.getString(key);
-                    list.add(value);
+                    list.add(new ObjectList(key,value));
                 }
 
             }
@@ -169,18 +172,30 @@ public class ObjectField {
         this.eventPhases = eventPhases;
     }
 
-    public List<String> getList() {
+    public List<ObjectList> getList() {
         return list;
     }
 
-    public void setList(List<String> list) {
+    public void setList(List<ObjectList> list) {
         this.list = list;
     }
 
     public String getFieldData(){
         String jsonString = "";
         if(!value.isEmpty()){
-            jsonString = "\""+key+"\":\""+ value+"\"";
+            if(controlType.equals("l")){
+                String tmpValue = "";
+                for(ObjectList objectList:list){
+                    if(objectList.getId().equals(value)){
+                        tmpValue = objectList.getId();
+                        break;
+                    }
+                }
+                jsonString = "\"" + key + "\":\"" + tmpValue + "\"";
+                Log.e("VLLL",jsonString);
+            }else {
+                jsonString = "\"" + key + "\":\"" + value + "\"";
+            }
         }
         return jsonString;
     }

@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -88,6 +89,8 @@ public class DeatailPointActivity extends BaseActivity {
                     jsonPoints.put(point.getKey(),jsonPoint);
                     jsonObject.put("points",jsonPoints);
                     mySharedPreferences.setDataConfig(jsonObject.toString());
+                    Toast.makeText(DeatailPointActivity.this, "Point completed", Toast.LENGTH_SHORT).show();
+                    finish();
                 } catch (JSONException e) {
 
                 }

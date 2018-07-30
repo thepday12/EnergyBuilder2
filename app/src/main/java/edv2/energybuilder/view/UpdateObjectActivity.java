@@ -242,7 +242,6 @@ public class UpdateObjectActivity extends BaseActivity {
 
 
                 List<EventPhase> eventPhases = new ArrayList<>();
-                List<String> visibleList = new ArrayList<>();
 
 
                 try {
@@ -263,9 +262,7 @@ public class UpdateObjectActivity extends BaseActivity {
                                 }catch (Exception e){
 
                                 }
-
                                 eventPhases.add(new EventPhase(key,phase,name));
-                                visibleList.add(name);
                             }
                         }
                     }
@@ -273,7 +270,7 @@ public class UpdateObjectActivity extends BaseActivity {
                 }
 
                 //Neu la EU add rieng operation
-                fields.add(new ObjectField("operation","Operation","l","l",eventPhases,visibleList));
+                fields.add(new ObjectField("operation","Operation","l","l",eventPhases));
             }
 
             //add cac field trong object_attrs
@@ -334,7 +331,7 @@ public class UpdateObjectActivity extends BaseActivity {
         } catch (JSONException e) {
         }
         final JSONObject jsonObject = tmp;
-        objectFieldAdapter = new ObjectFieldAdapter(this,jsonObject, currentObjectId,fields, new UpdateFieldListener() {
+        objectFieldAdapter = new ObjectFieldAdapter(this, currentObjectId,fields, new UpdateFieldListener() {
             @Override
             public void changeValue(int position, ObjectField objectField) {
                 fields.set(position,objectField);
