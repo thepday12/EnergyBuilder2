@@ -325,26 +325,30 @@ public class UpdateObjectActivity extends BaseActivity {
         }
     }
     private void updateValue(){
-        JSONObject tmp = new JSONObject();
-        try {
-            tmp = new JSONObject(mySharedPreferences.getDataConfig());
-        } catch (JSONException e) {
-        }
-        final JSONObject jsonObject = tmp;
+
         objectFieldAdapter = new ObjectFieldAdapter(this, currentObjectId,fields, new UpdateFieldListener() {
             @Override
             public void changeValue(int position, ObjectField objectField) {
+
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
+                } catch (JSONException e) {
+                }
+
+
+
                 fields.set(position,objectField);
                 if(position==0){
                     updateFieldValue(jsonObject,position);
                     currentEventPhasePosition = 0;
                 }else if(type.equals("EU")&&position==1){
-                    //Neu La EU thi xac dinh vi tri
+                    //Neu La EU thi xac dinh vi tri (value = phase_event)
                     String value = objectField.getValue();
                     List<EventPhase> eventPhases = objectField.getEventPhases();
                     for(int i=0;i<eventPhases.size();i++){
                         EventPhase eventPhase = eventPhases.get(i);
-                        if(eventPhase.getName().equals(value)){
+                        if(eventPhase.getPhaseEvent().equals(value)){
                             currentEventPhasePosition = i;
                         }
                     }
