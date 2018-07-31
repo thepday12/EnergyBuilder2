@@ -56,15 +56,17 @@ public class ObjectFieldAdapter extends RecyclerView
     private UpdateFieldListener updateFieldListener;
     private Gson gson = new Gson();
     private String objectId;
+    private String type;
     private MySharedPreferences mySharedPreferences;
 
 
 
-    public ObjectFieldAdapter(Activity activity,  String objectId, List<ObjectField> dataset, UpdateFieldListener updateFieldListener) {
+    public ObjectFieldAdapter(Activity activity, String type, String objectId, List<ObjectField> dataset, UpdateFieldListener updateFieldListener) {
         mActivity = activity;
         this.mContext = mActivity.getBaseContext();
         this.updateFieldListener= updateFieldListener;
         this.objectId =objectId;
+        this.type =type;
         mDataset = dataset;
         mySharedPreferences = new MySharedPreferences(mContext);
     }
@@ -134,9 +136,13 @@ public class ObjectFieldAdapter extends RecyclerView
                         Iterator<String> keys = jsonObjectDetails.keys();
                         List<ValueAndDate> valueAndDates = new ArrayList<>();
                         ArrayList yVals = new ArrayList<>();
+                        String endWith = "";
+                        if(type.equals("EU")){
+                            endWith = mDataset.get(1).getValue();
+                        }
                         while (keys.hasNext()) {
                             String key = keys.next();
-                            if(key.startsWith(objectId)){
+                            if(key.startsWith(objectId)&& key.endsWith(endWith)){
                                 JSONObject innerJObject = jsonObjectDetails.getJSONObject(key);
                                 try{
                                     float value = Float.valueOf(innerJObject.getString(object.getKey()));
@@ -226,12 +232,22 @@ public class ObjectFieldAdapter extends RecyclerView
                 list.add(objectList.getName());
             }
             holder.spinnerField.setItems(list);
-            for(int i=0;i<objectLists.size();i++){
-                if(objectLists.get(i).getId().equals(value)){
-                    holder.spinnerField.setSelectedIndex(i);
-                    break;
+            if(value.isEmpty()){
+                if(objectLists.size()>0) {
+                    object.setValue(objectLists.get(0).getId());
+                    int p = getPosition(object, position);
+                    mDataset.set(p, object);
+                    updateFieldListener.changeValue(p, object);
+                }
+            }else {
+                for (int i = 0; i < objectLists.size(); i++) {
+                    if (objectLists.get(i).getId().equals(value)) {
+                        holder.spinnerField.setSelectedIndex(i);
+                        break;
+                    }
                 }
             }
+
             holder.spinnerField.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
 
                 @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
@@ -329,6 +345,7 @@ public class ObjectFieldAdapter extends RecyclerView
 
     private String getShortDate(String date){
         String result = "";
+        date = date.split("_")[0];
         String[] arr = date.split("-");
         try {
             result = arr[1] + "/" + arr[2];

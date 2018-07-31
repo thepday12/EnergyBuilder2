@@ -275,7 +275,10 @@ public class UpdateObjectActivity extends BaseActivity {
 
             //add cac field trong object_attrs
             for (int i = 0; i < jsonType.length(); i++) {
-                fields.add(new ObjectField(jsonType.getJSONObject(i),jsonList));
+                ObjectField field= new ObjectField(jsonType.getJSONObject(i),jsonList);
+                if(!field.getControlType().isEmpty()&&!field.getControlType().equals("null")) {
+                    fields.add(field);
+                }
             }
             //Cap nhat value cho cac field
             updateFieldValue(jsonObject,0);
@@ -326,7 +329,7 @@ public class UpdateObjectActivity extends BaseActivity {
     }
     private void updateValue(){
 
-        objectFieldAdapter = new ObjectFieldAdapter(this, currentObjectId,fields, new UpdateFieldListener() {
+        objectFieldAdapter = new ObjectFieldAdapter(this,type, currentObjectId,fields, new UpdateFieldListener() {
             @Override
             public void changeValue(int position, ObjectField objectField) {
 

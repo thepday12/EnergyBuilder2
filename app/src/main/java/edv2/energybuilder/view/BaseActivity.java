@@ -241,9 +241,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                     startLoginActivity(Global.ACTION_DOWNLOAD);
                 } else {
                     mySharedPreferences.setDataConfig(response.toString());
+                    Toast.makeText(BaseActivity.this, "Download completed!", Toast.LENGTH_SHORT).show();
+                    startRoutesActivity();
                 }
-                Toast.makeText(BaseActivity.this, "Download completed!", Toast.LENGTH_SHORT).show();
-                startRoutesActivity();
             }
         }, new Response.ErrorListener() {
             @Override
