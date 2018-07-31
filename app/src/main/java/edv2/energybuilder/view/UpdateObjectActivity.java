@@ -198,19 +198,23 @@ public class UpdateObjectActivity extends BaseActivity {
 
     private void resetAllField() {
         currentEventPhasePosition = 0;
-        resetAllField(0);
+        for(int i =0;i<fields.size();i++){
+            ObjectField field = fields.get(i);
+            field.setValue("");
+        }
+        objectFieldAdapter.changeDataset(fields);
     }
     private void resetAllField(int start) {
         for(int i =start;i<fields.size();i++){
             ObjectField field = fields.get(i);
             field.setValue("");
         }
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
-        } catch (JSONException e) {
-
-        }
+//        JSONObject jsonObject = new JSONObject();
+//        try {
+//            jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
+//        } catch (JSONException e) {
+//
+//        }
         try {
             objectFieldAdapter.notifyItemRangeChanged(start, fields.size()-start);
         }catch (Exception e){

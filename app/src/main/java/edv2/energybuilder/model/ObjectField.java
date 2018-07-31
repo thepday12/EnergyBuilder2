@@ -51,6 +51,7 @@ public class ObjectField {
         for(EventPhase eventPhase:eventPhases){
             tmpLists.add(new ObjectList(eventPhase.getPhaseEvent(),eventPhase.getName()));
         }
+        this.value = tmpLists.get(0).getId();
         this.list = tmpLists;
     }
 

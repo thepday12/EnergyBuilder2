@@ -57,6 +57,7 @@ public class ObjectFieldAdapter extends RecyclerView
     private Gson gson = new Gson();
     private String objectId;
     private String type;
+    private boolean isReset = false;
     private MySharedPreferences mySharedPreferences;
 
 
@@ -232,21 +233,21 @@ public class ObjectFieldAdapter extends RecyclerView
                 list.add(objectList.getName());
             }
             holder.spinnerField.setItems(list);
-            if(value.isEmpty()){
-                if(objectLists.size()>0) {
-                    object.setValue(objectLists.get(0).getId());
-                    int p = getPosition(object, position);
-                    mDataset.set(p, object);
-                    updateFieldListener.changeValue(p, object);
-                }
-            }else {
+//            if(value.isEmpty()){
+//                if(objectLists.size()>0) {
+//                    object.setValue(objectLists.get(0).getId());
+//                    int p = getPosition(object, position);
+//                    mDataset.set(p, object);
+//                    updateFieldListener.changeValue(p, object);
+//                }
+//            }else {
                 for (int i = 0; i < objectLists.size(); i++) {
                     if (objectLists.get(i).getId().equals(value)) {
                         holder.spinnerField.setSelectedIndex(i);
                         break;
                     }
                 }
-            }
+//            }
 
             holder.spinnerField.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
 
@@ -357,6 +358,12 @@ public class ObjectFieldAdapter extends RecyclerView
     @Override
     public int getItemCount() {
         return mDataset.size();
+    }
+
+    public void changeDataset(List<ObjectField> dataset){
+        mDataset = dataset;
+        isReset = true;
+        notifyDataSetChanged();
     }
 
     private int getPosition(ObjectField object,int position){
