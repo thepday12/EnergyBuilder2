@@ -197,13 +197,17 @@ public class UpdateObjectActivity extends BaseActivity {
     }
 
     private void resetAllField() {
-        currentEventPhasePosition = 0;
+//        currentEventPhasePosition = 0;
 //        for(int i =0;i<fields.size();i++){
 //            ObjectField field = fields.get(i);
 //            field.setValue("");
 //        }
 //        objectFieldAdapter.changeDataset(fields);
-        resetAllField(0);
+        int from =1;
+        if(type.equals("EU")){
+            from = 2;
+        }
+        resetAllField(from);
     }
     private void resetAllField(int start) {
         for(int i =start;i<fields.size();i++){
@@ -293,6 +297,7 @@ public class UpdateObjectActivity extends BaseActivity {
             }
             //Cap nhat value cho cac field
 
+
             updateFieldValue(jsonObject,0);
             updateValue();
 
@@ -358,8 +363,8 @@ public class UpdateObjectActivity extends BaseActivity {
 
 
                 fields.set(position,objectField);
-                if(position==0){
-                    updateFieldValue(jsonObject,position);
+                if(position==0){//Change orcurdate
+                    updateFieldValue(jsonObject,1);
                     currentEventPhasePosition = 0;
                 }else if(type.equals("EU")&&position==1){
                     //Neu La EU thi xac dinh vi tri (value = phase_event)
