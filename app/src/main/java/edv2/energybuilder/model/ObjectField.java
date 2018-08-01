@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import edv2.energybuilder.utils.MyUtils;
+
 
 public class ObjectField {
     private String key = "";
@@ -31,6 +33,7 @@ public class ObjectField {
         this.dataType = dataType;
         this.controlType = controlType;
         this.enable = true;
+        this.value = MyUtils.getCurrentDate();
     }
 
     /***

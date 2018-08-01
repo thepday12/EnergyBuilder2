@@ -21,6 +21,17 @@
             android:layout_gravity="right"
             android:textSize="10dp"
             android:text="Close"/>
+        <TextView
+            android:layout_marginTop="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:id="@+id/tvTitle"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     <com.github.mikephil.charting.charts.LineChart
         android:paddingTop="@dimen/margin_lr"
         android:layout_marginTop="8dp"

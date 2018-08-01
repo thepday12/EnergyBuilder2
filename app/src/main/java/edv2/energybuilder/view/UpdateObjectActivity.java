@@ -198,16 +198,23 @@ public class UpdateObjectActivity extends BaseActivity {
 
     private void resetAllField() {
         currentEventPhasePosition = 0;
-        for(int i =0;i<fields.size();i++){
-            ObjectField field = fields.get(i);
-            field.setValue("");
-        }
-        objectFieldAdapter.changeDataset(fields);
+//        for(int i =0;i<fields.size();i++){
+//            ObjectField field = fields.get(i);
+//            field.setValue("");
+//        }
+//        objectFieldAdapter.changeDataset(fields);
+        resetAllField(0);
     }
     private void resetAllField(int start) {
         for(int i =start;i<fields.size();i++){
             ObjectField field = fields.get(i);
-            field.setValue("");
+            if(i==0) {
+                field.setValue(MyUtils.getCurrentDate());
+            }else if(field.getControlType().equals("l")){
+                field.setValue(field.getList().get(0).getId());
+            }else{
+                field.setValue("");
+            }
         }
 //        JSONObject jsonObject = new JSONObject();
 //        try {
@@ -285,6 +292,7 @@ public class UpdateObjectActivity extends BaseActivity {
                 }
             }
             //Cap nhat value cho cac field
+
             updateFieldValue(jsonObject,0);
             updateValue();
 
@@ -315,6 +323,10 @@ public class UpdateObjectActivity extends BaseActivity {
 
                     }catch (Exception e){
 
+                    }
+                    //Neu gia tri  = rong cho list thi value  = gia tri dau tien
+                    if(value.isEmpty() && field.getControlType().equals("l")){
+                       value = field.getList().get(0).getId();
                     }
                     field.setValue(value);
                 }

@@ -108,8 +108,11 @@ public class ObjectFieldAdapter extends RecyclerView
     @Override
     public void onBindViewHolder(final DataObjectHolder holder, final int position) {
         final ObjectField object = mDataset.get(position);
-
-        holder.tvTitle.setText(object.getName());
+        String title = object.getName();
+        if(object.isMandatory()){
+            title+= "(*)";
+        }
+        holder.tvTitle.setText(title);
         holder.tvTitle.setTextColor(Color.BLACK);
         holder.tvTitle.setOnClickListener(null);
         if(object.getControlType().equals("n")){
@@ -146,9 +149,12 @@ public class ObjectFieldAdapter extends RecyclerView
                             if(key.startsWith(objectId)&& key.endsWith(endWith)){
                                 JSONObject innerJObject = jsonObjectDetails.getJSONObject(key);
                                 try{
-                                    float value = Float.valueOf(innerJObject.getString(object.getKey()));
-                                    String date = key.replace(objectId+"_","");
-                                    valueAndDates.add(new ValueAndDate(date,value));
+                                    String tmp = innerJObject.getString(object.getKey());
+                                    if(!tmp.isEmpty()) {
+                                        float value = Float.valueOf(tmp);
+                                        String date = key.replace(objectId + "_", "");
+                                        valueAndDates.add(new ValueAndDate(date, value));
+                                    }
                                 }catch (Exception e){
 
                                 }
@@ -158,7 +164,12 @@ public class ObjectFieldAdapter extends RecyclerView
 
                         Collections.sort(valueAndDates, new StringDateComparator());
                         List<ValueAndDate> tmp = new ArrayList<>();
-                        for(int i =0; i<valueAndDates.size();i++){
+                        //Lay toi da 10 gia tri
+                        int addValue = 0;
+                        if(valueAndDates.size()>10){
+                            addValue= valueAndDates.size() -10;
+                        }
+                        for(int i =addValue; i<valueAndDates.size();i++){
                             Float value = i*1f;
                             ValueAndDate valueAndDate = valueAndDates.get(i);
                             yVals.add(i,new Entry(value,valueAndDate.getValue()));
@@ -167,7 +178,7 @@ public class ObjectFieldAdapter extends RecyclerView
                         }
 
                         if(yVals.size()>0) {
-                            showChartDialog(tmp,yVals);
+                            showChartDialog(object.getName(),tmp,yVals);
                         }
 
                     } catch (JSONException e) {
@@ -280,7 +291,7 @@ public class ObjectFieldAdapter extends RecyclerView
 
     }
 
-    private void showChartDialog(final List<ValueAndDate> dateList, ArrayList yVals) {
+    private void showChartDialog(String title,final List<ValueAndDate> dateList, ArrayList yVals) {
         // custom dialog
         final Dialog dialog = new Dialog(mActivity);
         dialog.setCanceledOnTouchOutside(false);
@@ -291,7 +302,9 @@ public class ObjectFieldAdapter extends RecyclerView
         LineChart lineChart =  dialog.findViewById(R.id.lineChart);
 
 
+        TextView tvTitle = dialog.findViewById(R.id.tvTitle);
         Button btClose = dialog.findViewById(R.id.btClose);
+        tvTitle.setText(title);
         // if button is clicked, close the custom dialog
         btClose.setOnClickListener(new View.OnClickListener() {
             @Override
