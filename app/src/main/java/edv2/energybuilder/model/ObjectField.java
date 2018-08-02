@@ -198,7 +198,7 @@ public class ObjectField {
                 jsonString = "\"" + key + "\":\"" + tmpValue + "\"";
                 Log.e("VLLL",jsonString);
             }else if(controlType.equals("n")){
-                jsonString = "\"" + key + "\":\"" + value.replace(",",".") + "\"";//Format cac quoc gia la khac nhau
+                jsonString = "\"" + key + "\":\"" + MyUtils.formatDecimalValue(value) + "\"";//Format cac quoc gia la khac nhau
             }else {
                 jsonString = "\"" + key + "\":\"" + value + "\"";
             }

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -63,6 +66,27 @@ public class MyUtils {
             result = "0"+result;
         }
         return result;
+    }
+
+    public static String formatDecimalValueWithLocation(String number){
+        NumberFormat nf = NumberFormat.getInstance();
+        String decSeparator = ".";
+        if (nf instanceof DecimalFormat) {
+            DecimalFormatSymbols sym = ((DecimalFormat) nf).getDecimalFormatSymbols();
+             decSeparator = String.valueOf(sym.getDecimalSeparator());
+        }
+//        return number.replace(".",decSeparator); //ANdroid decimal keyboard  ="."
+        return number;
+    }
+
+    public static String formatDecimalValue(String number){
+        NumberFormat nf = NumberFormat.getInstance();
+        String decSeparator = ",";
+        if (nf instanceof DecimalFormat) {
+            DecimalFormatSymbols sym = ((DecimalFormat) nf).getDecimalFormatSymbols();
+             decSeparator = String.valueOf(sym.getDecimalSeparator());
+        }
+        return number.replace(decSeparator,".");
     }
 
 }

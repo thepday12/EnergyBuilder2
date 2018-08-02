@@ -161,7 +161,15 @@ public class UpdateObjectActivity extends BaseActivity {
                         }
 
                         String jsonString = "";
-                        for (ObjectField field : fields) {
+                        List<ObjectField> tmp = new ArrayList<>();
+                        int i = 1;//Khong lay orcur date
+                        if(type.equals("EU")){
+                            i =2;//Khong lay orcur date + operation
+                        }
+                        for(;i<fields.size();i++){
+                            tmp.add(fields.get(i));
+                        }
+                        for (ObjectField field : tmp) {
                             if (!field.getFieldData().isEmpty()) {
                                 jsonString += field.getFieldData() + ",";
                             }

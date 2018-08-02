@@ -128,7 +128,7 @@ public class ObjectFieldAdapter extends RecyclerView
             holder.etField.setFilters(filterArray);
             holder.tvTitle.setTextColor(Color.parseColor("#2196F3"));
 
-            holder.etField.setText(object.getValue());
+            holder.etField.setText(MyUtils.formatDecimalValueWithLocation(object.getValue()));
 
 
 
