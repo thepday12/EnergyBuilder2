@@ -9,16 +9,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 import edv2.energybuilder.R;
 import edv2.energybuilder.adapter.PointsAdapter;
 import edv2.energybuilder.model.Point;
+import edv2.energybuilder.model.Route;
 import edv2.energybuilder.utils.Global;
 import edv2.energybuilder.utils.MyUtils;
 import edv2.energybuilder.utils.VerticalSpaceItemDecoration;
@@ -43,27 +47,21 @@ public class PointsActivity extends BaseActivity {
     private void loadData() {
         try {
             JSONObject jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
-            JSONObject jsonPoints = jsonObject.getJSONObject("points");
-            Iterator<String> keys = jsonPoints.keys();
+            JSONArray jsonPoints = jsonObject.getJSONArray("points");
             points = new ArrayList<>();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                if(jsonPoints.get(key) instanceof JSONObject) {
-                    JSONObject innerJObject = jsonPoints.getJSONObject(key);
-                    String routeId = innerJObject.getString("route_id");
-                    if(!routeId.equals(ROUTE_ID)){
-                        continue;
-                    }else{
-                        points.add(new Point(key,innerJObject));
-                    }
-                    Log.v("details", " lastUpdate");
-                } else if (jsonPoints.get(key) instanceof String){
-                    String value = jsonPoints.getString("type");
-                    Log.v("key = type", "value = " + value);
+            for(int i=0;i<jsonPoints.length();i++){
+                JSONObject innerJObject = jsonPoints.getJSONObject(i);
+                String routeId = innerJObject.getString("route_id");
+                if(!routeId.equals(ROUTE_ID)){
+                    continue;
+                }else{
+                    points.add(new Point(innerJObject));
                 }
             }
 
+
             if(points.size()>0) {
+
                 rvContent.setAdapter(new PointsAdapter(this,points));
             }
 

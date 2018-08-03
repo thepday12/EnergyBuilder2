@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,11 +83,20 @@ public class DeatailPointActivity extends BaseActivity {
             public void onClick(View view) {
                 try {
                     JSONObject jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
-                    JSONObject jsonPoints = jsonObject.getJSONObject("points");
-                    JSONObject jsonPoint = jsonPoints.getJSONObject(point.getKey());
+                    JSONArray jsonPoints = jsonObject.getJSONArray("points");
+                    JSONObject jsonPoint = new JSONObject();
+                    int position = 0;
+                    for(int i=0;i<jsonPoints.length();i++){
+                        JSONObject object = jsonPoints.getJSONObject(i);
+                        if(object.getString("key").equals(point.getKey())){
+                            jsonPoint = object;
+                            position =i;
+                            break;
+                        }
+                    }
                     //Cap nhat trang thai complete cho Point
                     jsonPoint.put("complete",true);
-                    jsonPoints.put(point.getKey(),jsonPoint);
+                    jsonPoints.put(position,jsonPoint);
                     jsonObject.put("points",jsonPoints);
                     mySharedPreferences.setDataConfig(jsonObject.toString());
                     Toast.makeText(DeatailPointActivity.this, "Point completed", Toast.LENGTH_SHORT).show();
@@ -102,6 +112,7 @@ public class DeatailPointActivity extends BaseActivity {
                 showDialogConfirm("Warning", "All data of this point will be removed. Do you really want to continue?", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         resetPoint(point);
+                        Toast.makeText(DeatailPointActivity.this, "Point reset", Toast.LENGTH_SHORT).show();
                     }
                 });
 

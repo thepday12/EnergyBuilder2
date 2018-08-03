@@ -338,12 +338,18 @@ public abstract class BaseActivity extends AppCompatActivity {
                 jsonObject.put("object_details",newJsonObjectDetail);
                 //Cap nhat trang thai complete
                 try {
-                    JSONObject jsonPoints = jsonObject.getJSONObject("points");
-                    JSONObject jsonPoint = jsonPoints.getJSONObject(point.getKey());
-                    //Cap nhat trang thai complete cho Point
-                    jsonPoint.put("complete",false);
-                    jsonPoints.put(point.getKey(),jsonPoint);
-                    jsonObject.put("points",jsonPoints);
+                    JSONArray jsonPoints = jsonObject.getJSONArray("points");
+                    for(int i =0;i<jsonPoints.length();i++) {
+
+                        JSONObject jsonPoint = jsonPoints.getJSONObject(i);
+                        if(point.getKey().equals(jsonPoint.getString("key"))) {
+                            //Cap nhat trang thai complete cho Point
+                            jsonPoint.put("complete", false);
+                            jsonPoints.put(i, jsonPoint);
+                            jsonObject.put("points", jsonPoints);
+                            break;
+                        }
+                    }
                 } catch (JSONException e) {
 
                 }

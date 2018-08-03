@@ -1,5 +1,6 @@
 package edv2.energybuilder.model;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,8 +15,12 @@ public class Route {
     private int complete = 0;
     private int total = 0;
 
-    public Route(String key, JSONObject jsonObject,JSONObject jsonPoints) {
-        this.key = key;
+    public Route( JSONObject jsonObject,JSONArray jsonPoints) {
+        try {
+            key = jsonObject.getString("key");
+        } catch (JSONException e) {
+        }
+
         try {
             id = jsonObject.getString("id");
         } catch (JSONException e) {
@@ -27,14 +32,11 @@ public class Route {
         }
 
 
-        Iterator<String> keys = jsonPoints.keys();
         total = 0;
         complete = 0;
-
-        while (keys.hasNext()) {
-            String keyJson = keys.next();
+        for(int i=0;i<jsonPoints.length();i++){
             try {
-                JSONObject object = jsonPoints.getJSONObject(keyJson);
+                JSONObject object = jsonPoints.getJSONObject(i);
                 if(object.getString("route_id").equals(id)){
                     total+=1;
                     if(object.getBoolean("complete")){
@@ -45,6 +47,7 @@ public class Route {
 
             }
         }
+
 
 
 
@@ -89,4 +92,5 @@ public class Route {
     public void setTotal(int total) {
         this.total = total;
     }
+
 }

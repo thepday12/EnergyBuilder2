@@ -84,11 +84,11 @@ public class ObjectField {
             controlType = jsonObject.getString("control_type");
 
             if(controlType.equals("l")){
-                JSONObject json = jsonList.getJSONObject(jsonObject.getString("list"));
-                Iterator<String> keys = json.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    String value = json.getString(key);
+                JSONArray json = jsonList.getJSONArray(jsonObject.getString("list"));
+                for(int i =0;i<json.length();i++){
+                    JSONObject values = json.getJSONObject(i);
+                    String key = values.getString("value");
+                    String value = values.getString("text");
                     list.add(new ObjectList(key,value));
                 }
 

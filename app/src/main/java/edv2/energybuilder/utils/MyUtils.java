@@ -62,7 +62,7 @@ public class MyUtils {
 
     public static String formatDateNumber(int i){
         String result = String.valueOf(i);
-        if(i<9){
+        if(i<10){
             result = "0"+result;
         }
         return result;

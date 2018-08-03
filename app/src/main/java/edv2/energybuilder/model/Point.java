@@ -16,8 +16,13 @@ public class Point {
     DetailPoint ta =  new DetailPoint();
     DetailPoint eq =  new DetailPoint();
 
-    public Point(String key, JSONObject jsonObject) {
-        this.key = key;
+    public Point( JSONObject jsonObject) {
+
+        try {
+            key = jsonObject.getString("key");
+        } catch (JSONException e) {
+        }
+
         try {
             id = jsonObject.getString("id");
         } catch (JSONException e) {

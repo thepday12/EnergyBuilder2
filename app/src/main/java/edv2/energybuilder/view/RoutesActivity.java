@@ -6,10 +6,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,28 +34,23 @@ public class RoutesActivity extends BaseActivity {
     protected void onResume() {
         try {
             JSONObject jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
-            JSONObject jsonRoutes = jsonObject.getJSONObject("routes");
-            JSONObject jsonPoints = jsonObject.getJSONObject("points");
-            Iterator<String> keys = jsonRoutes.keys();
+            JSONArray jsonRoutes = jsonObject.getJSONArray("routes");
+            JSONArray jsonPoints = jsonObject.getJSONArray("points");
+
             List<Route> routes = new ArrayList<>();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                if(jsonRoutes.get(key) instanceof JSONObject) {
-                    JSONObject innerJObject = jsonRoutes.getJSONObject(key);
-                    String total = innerJObject.getString("total");
-                    if(total.equals("0")){
-                        continue;
-                    }else{
-                        routes.add(new Route(key,innerJObject,jsonPoints));
-                    }
-                    Log.v("details", " lastUpdate");
-                } else if (jsonRoutes.get(key) instanceof String){
-                    String value = jsonRoutes.getString("type");
-                    Log.v("key = type", "value = " + value);
+            for(int i =0;i<jsonRoutes.length();i++){
+                JSONObject innerJObject = jsonRoutes.getJSONObject(i);
+                String total = innerJObject.getString("total");
+                if(total.equals("0")){
+                    continue;
+                }else{
+                    routes.add(new Route(innerJObject,jsonPoints));
                 }
             }
 
+
             if(routes.size()>0) {
+
                 rvContent.setAdapter(new RoutesAdapter(RoutesActivity.this,routes));
             }
 

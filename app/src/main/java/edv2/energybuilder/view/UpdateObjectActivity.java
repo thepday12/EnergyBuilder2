@@ -35,6 +35,7 @@ import edv2.energybuilder.adapter.UpdateFieldListener;
 import edv2.energybuilder.model.EventPhase;
 import edv2.energybuilder.model.ObjectData;
 import edv2.energybuilder.model.ObjectField;
+import edv2.energybuilder.model.ObjectList;
 import edv2.energybuilder.model.Point;
 import edv2.energybuilder.model.Route;
 import edv2.energybuilder.utils.Global;
@@ -258,9 +259,23 @@ public class UpdateObjectActivity extends BaseActivity {
             fields.add(new ObjectField("occur_date","Occur date","d","d"));
             if(type.equals("EU")){
                 //Lay thong tin de tao name cho event_phase
-                JSONObject jsonEvent = jsonList.getJSONObject("CODE_EVENT_TYPE");
-                JSONObject jsonPhase = jsonList.getJSONObject("CODE_FLOW_PHASE");
-
+                JSONArray jsonEvent = jsonList.getJSONArray("CODE_EVENT_TYPE");
+                JSONArray jsonPhase = jsonList.getJSONArray("CODE_FLOW_PHASE");
+                //Tao danh sach event  - phase tu Json
+                List<ObjectList> eventList = new ArrayList<>();
+                List<ObjectList> phaseList = new ArrayList<>();
+                for(int i = 0;i<jsonEvent.length();i++){
+                    JSONObject values = jsonEvent.getJSONObject(i);
+                    String key = values.getString("value");
+                    String value = values.getString("text");
+                    eventList.add(new ObjectList(key,value));
+                }
+                for(int i = 0;i<jsonPhase.length();i++){
+                    JSONObject values = jsonPhase.getJSONObject(i);
+                    String key = values.getString("value");
+                    String value = values.getString("text");
+                    phaseList.add(new ObjectList(key,value));
+                }
 
 
 
@@ -270,9 +285,11 @@ public class UpdateObjectActivity extends BaseActivity {
                 try {
 
                     JSONObject jsonEventPhase = jsonObjects.getJSONObject(currentObjectId).getJSONObject("event_phases");
+//                    jsonEventPhase = new JSONObject("{\"1\":[\"1\",\"3\"],\"2\":[\"2\",\"6\"]}");
                     Iterator<String> keys = jsonEventPhase.keys();
 
-                    while (keys.hasNext()) {
+
+                    while (keys.hasNext()) {//event - key  & con cua event la danh sach phase
                         String key = keys.next();
                         if(jsonEventPhase.get(key) instanceof JSONArray) {
                             JSONArray innerJObject = jsonEventPhase.getJSONArray(key);
@@ -281,11 +298,28 @@ public class UpdateObjectActivity extends BaseActivity {
                                 //Lay name dua vao event_id = phase_id
                                 String name = "";
                                 try{
-                                    name = jsonEvent.getString(key)+" "+jsonPhase.getString(phase);
+                                    //Tim kiem ten event trong danh sach event
+                                    for(ObjectList item:eventList){
+                                        if(item.getId().equals(key)) {
+                                            name = item.getName() + " ";
+                                            break;
+                                        }
+                                    }
+
+                                    //Tim kiem ten phase trong danh sach phase
+                                    for(ObjectList item2:phaseList){
+                                        if(item2.getId().equals(phase)) {
+                                            name += item2.getName();
+                                           break;
+                                        }
+                                    }
+
+                                    eventPhases.add(new EventPhase(key, phase, name));
+//                                    name = jsonEvent.getString(key)+" "+jsonPhase.getString(phase);
                                 }catch (Exception e){
 
                                 }
-                                eventPhases.add(new EventPhase(key,phase,name));
+
                             }
                         }
                     }
@@ -372,8 +406,13 @@ public class UpdateObjectActivity extends BaseActivity {
 
                 fields.set(position,objectField);
                 if(position==0){//Change orcurdate
-                    updateFieldValue(jsonObject,1);
-                    currentEventPhasePosition = 0;
+//                    updateFieldValue(jsonObject,1);
+                    if(type.equals("EU")) {
+                        updateFieldValue(jsonObject, 1);
+                    }else{
+                        updateFieldValue(jsonObject, 0);
+                    }
+//                    currentEventPhasePosition = 0;
                 }else if(type.equals("EU")&&position==1){
                     //Neu La EU thi xac dinh vi tri (value = phase_event)
                     String value = objectField.getValue();
