@@ -199,6 +199,7 @@ public class UpdateObjectActivity extends BaseActivity {
                 currentObjectPosition = position;
                 ObjectData objectData = detailObjects.get(currentObjectPosition);
                 currentObjectId = objectData.getKey();
+                currentEventPhasePosition = 0;
                 getSupportActionBar().setTitle(objectData.getName());
                 getObjectStruct();
             }
