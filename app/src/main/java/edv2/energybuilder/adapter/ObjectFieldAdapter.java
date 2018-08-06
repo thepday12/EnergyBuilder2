@@ -11,7 +11,9 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -45,6 +47,7 @@ import edv2.energybuilder.model.ObjectList;
 import edv2.energybuilder.model.ValueAndDate;
 import edv2.energybuilder.utils.MySharedPreferences;
 import edv2.energybuilder.utils.MyUtils;
+import edv2.energybuilder.utils.MyValueFormatter;
 import edv2.energybuilder.utils.StringDateComparator;
 
 public class ObjectFieldAdapter extends RecyclerView
@@ -154,6 +157,8 @@ public class ObjectFieldAdapter extends RecyclerView
                                         float value = Float.valueOf(tmp);
                                         String date = key.replace(objectId + "_", "");
                                         valueAndDates.add(new ValueAndDate(date, value));
+                                        valueAndDates.add(new ValueAndDate(date, value));
+                                        valueAndDates.add(new ValueAndDate(date, value));
                                     }
                                 }catch (Exception e){
 
@@ -170,9 +175,9 @@ public class ObjectFieldAdapter extends RecyclerView
                             addValue= valueAndDates.size() -10;
                         }
                         for(int i =addValue; i<valueAndDates.size();i++){
-                            Float value = i*1f;
+                            Float value = (i-addValue)*1f;
                             ValueAndDate valueAndDate = valueAndDates.get(i);
-                            yVals.add(i,new Entry(value,valueAndDate.getValue()));
+                            yVals.add(i-addValue,new Entry(value,valueAndDate.getValue()));
                             valueAndDate.setCompareValue(value);
                             tmp.add(valueAndDate);
                         }
@@ -243,7 +248,20 @@ public class ObjectFieldAdapter extends RecyclerView
             for(ObjectList objectList: object.getList()){
                 list.add(objectList.getName());
             }
+
+
             holder.spinnerField.setItems(list);
+            //Khi chon vao spinner thi an ban phim
+            holder.spinnerField.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    //AN ban phim
+                    MyUtils.hideKeyboard(mActivity);
+                    //Goi xu ly mac dinh cua spinner
+                    holder.spinnerField.onTouchEvent(motionEvent);
+                    return true;
+                }
+            });
 //            if(value.isEmpty()){
 //                if(objectLists.size()>0) {
 //                    object.setValue(objectLists.get(0).getId());
@@ -332,7 +350,7 @@ public class ObjectFieldAdapter extends RecyclerView
         lineChart.getDescription().setEnabled(false);
 
         LineDataSet set = new LineDataSet(yVals, null);
-
+        set.setValueFormatter(new MyValueFormatter());
         lineChart.getXAxis().setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {

@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -202,6 +203,17 @@ public class UpdateObjectActivity extends BaseActivity {
                 currentEventPhasePosition = 0;
                 getSupportActionBar().setTitle(objectData.getName());
                 getObjectStruct();
+            }
+        });
+
+        spinnerObject.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                //AN ban phim
+                MyUtils.hideKeyboard(UpdateObjectActivity.this);
+                //Goi xu ly mac dinh cua spinner
+                spinnerObject.onTouchEvent(motionEvent);
+                return true;
             }
         });
     }
