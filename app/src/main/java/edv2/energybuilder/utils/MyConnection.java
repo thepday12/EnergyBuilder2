@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -73,6 +74,10 @@ public class MyConnection {
         };
 
 
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                Global.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MyApplication.getInstance().addToRequestQueue(stringRequest, "req_download");
     }
 

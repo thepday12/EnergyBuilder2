@@ -6,6 +6,7 @@ public class Global {
     public static  int ACTION_ROUTES = 1;
     public static  int ACTION_DOWNLOAD = 2;
     public static  int ACTION_UPLOAD = -1;
+    public static  int MY_SOCKET_TIMEOUT_MS = 60000;
     public static  String EX_ACTION = "EX_ACTION";
     public static  String EX_ID = "EX_ID";
     public static  String EX_NAME = "EX_NAME";

@@ -157,8 +157,6 @@ public class ObjectFieldAdapter extends RecyclerView
                                         float value = Float.valueOf(tmp);
                                         String date = key.replace(objectId + "_", "");
                                         valueAndDates.add(new ValueAndDate(date, value));
-                                        valueAndDates.add(new ValueAndDate(date, value));
-                                        valueAndDates.add(new ValueAndDate(date, value));
                                     }
                                 }catch (Exception e){
 

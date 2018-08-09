@@ -9,6 +9,7 @@ public class MySharedPreferences {
     final String DATA_CAPTURE_KEY = "DATA_CAPTURE";
     final String HISTORY_DAYS_KEY = "HISTORY_DAYS";
     final String USER_TOKEN_KEY = "USER_TOKEN_KEY";
+    final String USER_NAME_KEY = "USER_NAME_KEY";
     final String DATA_CONFIG_KEY = "DATA_CONFIG";
 
     public MySharedPreferences(Context context) {
@@ -66,6 +67,16 @@ public class MySharedPreferences {
     public void setUserToken(String userToken){
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString(USER_TOKEN_KEY, userToken);
+        editor.apply();
+    }
+
+    public String getUserName(){
+        return sharedpreferences.getString(USER_NAME_KEY,"");
+    }
+
+    public void setUserName(String userName){
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString(USER_NAME_KEY, userName);
         editor.apply();
     }
 

@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -20,6 +22,7 @@ import edv2.energybuilder.utils.Global;
 public class LoginActivity extends BaseActivity {
     private EditText etUserName,etPassword;
     private Button btLogin;
+    private CheckBox cbRemember;
     private int action;
 
     @Override
@@ -37,12 +40,16 @@ public class LoginActivity extends BaseActivity {
     public void findView() {
         etUserName = findViewById(R.id.etUserName);
         etPassword = findViewById(R.id.etPassword);
+        cbRemember = findViewById(R.id.cbRemember);
         btLogin = findViewById(R.id.btLogin);
     }
 
     @Override
     public void configView() {
         action = getIntent().getIntExtra(Global.EX_ACTION,-1);
+        String userName = mySharedPreferences.getUserName();
+        cbRemember.setChecked(!userName.isEmpty());
+        etUserName.setText(userName);
     }
 
     @Override
@@ -53,6 +60,11 @@ public class LoginActivity extends BaseActivity {
                 btLogin.setEnabled(false);
                 String userName = etUserName.getText().toString();
                 String password = etPassword.getText().toString();
+                if(cbRemember.isChecked()){
+                    mySharedPreferences.setUserName(userName);
+                }else{
+                    mySharedPreferences.setUserName("");
+                }
                 if(!userName.isEmpty()&&!password.isEmpty()){
                     showProgressDialog("Login");
                     myConnection.requestLogin( userName, password, new Response.Listener<JSONObject>() {
@@ -92,6 +104,8 @@ public class LoginActivity extends BaseActivity {
                             completeRequest();
                         }
                     });
+                }else{
+                    Toast.makeText(LoginActivity.this, "Please enter your username and password", Toast.LENGTH_SHORT).show();
                 }
             }
         });
