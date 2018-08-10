@@ -33,8 +33,9 @@ import edv2.energybuilder.utils.animation.SlideInUpAnimator;
 
 public class DeatailPointActivity extends BaseActivity {
     private RecyclerView rvContent;
-    private Button btResetRoute,btCompletePoint;
+    private Button btResetRoute, btCompletePoint;
     private Point point;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +45,7 @@ public class DeatailPointActivity extends BaseActivity {
     protected void onResume() {
 
 
-
-        rvContent.setAdapter(new DetailPointAdapter(this,point));
-
+        rvContent.setAdapter(new DetailPointAdapter(this, point));
 
 
         super.onResume();
@@ -66,12 +65,12 @@ public class DeatailPointActivity extends BaseActivity {
 
     @Override
     public void configView() {
-        point = new Gson().fromJson(getIntent().getStringExtra(Global.EX_DATA),Point.class);
+        point = new Gson().fromJson(getIntent().getStringExtra(Global.EX_DATA), Point.class);
         getSupportActionBar().setTitle(point.getName());
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvContent.setLayoutManager(layoutManager);
         rvContent.setItemAnimator(new SlideInUpAnimator());
-        VerticalSpaceItemDecoration dividerItemDecoration = new VerticalSpaceItemDecoration((int) MyUtils.convertDpToPixel(8,this));
+        VerticalSpaceItemDecoration dividerItemDecoration = new VerticalSpaceItemDecoration((int) MyUtils.convertDpToPixel(8, this));
 
         rvContent.addItemDecoration(dividerItemDecoration);
     }
@@ -81,29 +80,35 @@ public class DeatailPointActivity extends BaseActivity {
         btCompletePoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    JSONObject jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
-                    JSONArray jsonPoints = jsonObject.getJSONArray("points");
-                    JSONObject jsonPoint = new JSONObject();
-                    int position = 0;
-                    for(int i=0;i<jsonPoints.length();i++){
-                        JSONObject object = jsonPoints.getJSONObject(i);
-                        if(object.getString("key").equals(point.getKey())){
-                            jsonPoint = object;
-                            position =i;
-                            break;
-                        }
-                    }
-                    //Cap nhat trang thai complete cho Point
-                    jsonPoint.put("complete",true);
-                    jsonPoints.put(position,jsonPoint);
-                    jsonObject.put("points",jsonPoints);
-                    mySharedPreferences.setDataConfig(jsonObject.toString());
-                    Toast.makeText(DeatailPointActivity.this, "Point completed", Toast.LENGTH_SHORT).show();
-                    finish();
-                } catch (JSONException e) {
+                showDialogConfirm("Point", "Are you sure you want to complete?", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
 
-                }
+                        try {
+                            JSONObject jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
+                            JSONArray jsonPoints = jsonObject.getJSONArray("points");
+                            JSONObject jsonPoint = new JSONObject();
+                            int position = 0;
+                            for (int i = 0; i < jsonPoints.length(); i++) {
+                                JSONObject object = jsonPoints.getJSONObject(i);
+                                if (object.getString("key").equals(point.getKey())) {
+                                    jsonPoint = object;
+                                    position = i;
+                                    break;
+                                }
+                            }
+                            //Cap nhat trang thai complete cho Point
+                            jsonPoint.put("complete", true);
+                            jsonPoints.put(position, jsonPoint);
+                            jsonObject.put("points", jsonPoints);
+                            mySharedPreferences.setDataConfig(jsonObject.toString());
+                            Toast.makeText(DeatailPointActivity.this, "Point completed", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } catch (JSONException e) {
+
+                        }
+
+                    }
+                });
             }
         });
         btResetRoute.setOnClickListener(new View.OnClickListener() {

@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity {
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(intent);
                 }else{
-                    showDialogConfirm("Login", "Are your sure you want to Logout?", new DialogInterface.OnClickListener() {
+                    showDialogConfirm("Login", "Are you sure you want to Logout?", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             mySharedPreferences.userLogout();
