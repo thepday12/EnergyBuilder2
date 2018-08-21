@@ -1,25 +1,15 @@
 package edv2.energybuilder.view;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import org.json.JSONArray;
@@ -27,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,7 +29,6 @@ import edv2.energybuilder.model.ObjectData;
 import edv2.energybuilder.model.ObjectField;
 import edv2.energybuilder.model.ObjectList;
 import edv2.energybuilder.model.Point;
-import edv2.energybuilder.model.Route;
 import edv2.energybuilder.utils.Global;
 import edv2.energybuilder.utils.MyUtils;
 import edv2.energybuilder.utils.VerticalSpaceItemDecoration;
@@ -49,7 +39,7 @@ public class UpdateObjectActivity extends BaseActivity {
     private MaterialSpinner spinnerObject;
     private int currentObjectPosition = 0;
     private int currentEventPhasePosition = 0;
-    private Button btReset,btSave;
+    private Button btReset, btSave;
     private Point point;
     private String type;
     private ObjectFieldAdapter objectFieldAdapter;
@@ -58,7 +48,7 @@ public class UpdateObjectActivity extends BaseActivity {
 
     private List<String> visibleObjects = new ArrayList<>();
     private List<ObjectData> detailObjects = new ArrayList<>();
-    private             List<ObjectField> fields;
+    private List<ObjectField> fields;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +57,6 @@ public class UpdateObjectActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-
 
 
         super.onResume();
@@ -92,16 +81,16 @@ public class UpdateObjectActivity extends BaseActivity {
 
 
         Intent intent = getIntent();
-        point = new Gson().fromJson(intent.getStringExtra(Global.EX_DATA),Point.class);
+        point = new Gson().fromJson(intent.getStringExtra(Global.EX_DATA), Point.class);
         type = intent.getStringExtra(Global.EX_ACTION);
 
         createSpinerSelectObject();
         getSupportActionBar().setTitle(visibleObjects.get(currentObjectPosition));
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvContent.setLayoutManager(layoutManager);
         rvContent.setItemAnimator(new SlideInUpAnimator());
-        VerticalSpaceItemDecoration dividerItemDecoration = new VerticalSpaceItemDecoration((int) MyUtils.convertDpToPixel(8,this));
+        VerticalSpaceItemDecoration dividerItemDecoration = new VerticalSpaceItemDecoration((int) MyUtils.convertDpToPixel(8, this));
 
         rvContent.addItemDecoration(dividerItemDecoration);
 
@@ -114,11 +103,11 @@ public class UpdateObjectActivity extends BaseActivity {
             JSONObject jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
             JSONObject objects = jsonObject.getJSONObject("objects");
             //Danh sach id
-            JSONArray jsonArray = new JSONArray( point.getObjects());
-            for(int i = 0;i<jsonArray.length();i++){
+            JSONArray jsonArray = new JSONArray(point.getObjects());
+            for (int i = 0; i < jsonArray.length(); i++) {
                 String item = jsonArray.getString(i);
-                if(item.startsWith(type)){
-                    ObjectData objectData = new ObjectData(item,objects.getJSONObject(item));
+                if (item.startsWith(type)) {
+                    ObjectData objectData = new ObjectData(item, objects.getJSONObject(item));
                     detailObjects.add(objectData);
                     visibleObjects.add(objectData.getName());
                 }
@@ -126,7 +115,7 @@ public class UpdateObjectActivity extends BaseActivity {
             }
         } catch (JSONException e) {
         }
-        if(visibleObjects.size()>0) {
+        if (visibleObjects.size() > 0) {
             spinnerObject.setItems(visibleObjects);
             currentObjectId = detailObjects.get(currentObjectPosition).getKey();
         }
@@ -138,65 +127,73 @@ public class UpdateObjectActivity extends BaseActivity {
         btReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              resetAllField();
+                resetAllField();
             }
         });
 
         btSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean isValid = true;
-                for(ObjectField field:fields){
-                    if(field.isMandatory() && field.getValue().isEmpty()){
-                        isValid =false;
-                        break;
+                if (checkInputFreq()) {
+                    showWarningInputFreq();
+                } else {
+                    boolean isValid = true;
+                    for (ObjectField field : fields) {
+                        if (field.isMandatory() && field.getValue().isEmpty()) {
+                            isValid = false;
+                            break;
+                        }
                     }
-                }
-                if(isValid) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
-                        JSONObject jsonObjectDetail = new JSONObject();
+                    if (isValid) {
                         try {
-                            jsonObjectDetail = jsonObject.getJSONObject("object_details");
-                        } catch (Exception e) {
+                            JSONObject jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
+                            JSONObject jsonObjectDetail = new JSONObject();
+                            try {
+                                jsonObjectDetail = jsonObject.getJSONObject("object_details");
+                            } catch (Exception e) {
 
-                        }
-
-                        String jsonString = "";
-                        List<ObjectField> tmp = new ArrayList<>();
-                        int i = 1;//Khong lay orcur date
-                        if(type.equals("EU")){
-                            i =2;//Khong lay orcur date + operation
-                        }
-                        for(;i<fields.size();i++){
-                            tmp.add(fields.get(i));
-                        }
-                        for (ObjectField field : tmp) {
-                            if (!field.getFieldData().isEmpty()) {
-                                jsonString += field.getFieldData() + ",";
                             }
-                        }
-                        if (!jsonString.isEmpty()) {
-                            jsonString += "\"editted\":\"1\"";
-                            jsonString = "{" + jsonString + "}";
-                            jsonObjectDetail.put(getCurrentKey(), new JSONObject(jsonString));
-                            jsonObject.put("object_details", jsonObjectDetail);
-                            mySharedPreferences.setDataConfig(jsonObject.toString());
-                            Toast.makeText(UpdateObjectActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (JSONException e) {
 
+                            String jsonString = "";
+                            List<ObjectField> tmp = new ArrayList<>();
+                            int i = 1;//Khong lay orcur date
+                            if (type.equals("EU")) {
+                                i = 2;//Khong lay orcur date + operation
+                            }
+                            for (; i < fields.size(); i++) {
+                                tmp.add(fields.get(i));
+                            }
+                            for (ObjectField field : tmp) {
+                                if (!field.getFieldData().isEmpty()) {
+                                    jsonString += field.getFieldData() + ",";
+                                }
+                            }
+                            if (!jsonString.isEmpty()) {
+                                jsonString += "\"editted\":\"1\"";
+                                jsonString = "{" + jsonString + "}";
+                                jsonObjectDetail.put(getCurrentKey(), new JSONObject(jsonString));
+                                jsonObject.put("object_details", jsonObjectDetail);
+                                mySharedPreferences.setDataConfig(jsonObject.toString());
+                                Toast.makeText(UpdateObjectActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
+                            }
+
+                            objectFieldAdapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+
+                        }
+                    } else {
+                        Toast.makeText(UpdateObjectActivity.this, "You must fill in all of the fields (*).", Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(UpdateObjectActivity.this, "You must fill in all of the fields (*).", Toast.LENGTH_SHORT).show();
-                }
 
+                }
             }
         });
 
+
         spinnerObject.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
 
-            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                 currentObjectPosition = position;
                 ObjectData objectData = detailObjects.get(currentObjectPosition);
                 currentObjectId = objectData.getKey();
@@ -225,20 +222,21 @@ public class UpdateObjectActivity extends BaseActivity {
 //            field.setValue("");
 //        }
 //        objectFieldAdapter.changeDataset(fields);
-        int from =1;
-        if(type.equals("EU")){
+        int from = 1;
+        if (type.equals("EU")) {
             from = 2;
         }
         resetAllField(from);
     }
+
     private void resetAllField(int start) {
-        for(int i =start;i<fields.size();i++){
+        for (int i = start; i < fields.size(); i++) {
             ObjectField field = fields.get(i);
-            if(i==0) {
+            if (i == 0) {
                 field.setValue(MyUtils.getCurrentDate());
-            }else if(field.getControlType().equals("l")){
+            } else if (field.getControlType().equals("l")) {
                 field.setValue(field.getList().get(0).getId());
-            }else{
+            } else {
                 field.setValue("");
             }
         }
@@ -249,14 +247,18 @@ public class UpdateObjectActivity extends BaseActivity {
 //
 //        }
         try {
-            objectFieldAdapter.notifyItemRangeChanged(start, fields.size()-start);
-        }catch (Exception e){
+            objectFieldAdapter.notifyItemRangeChanged(start, fields.size() - start);
+        } catch (Exception e) {
 
         }
 
     }
 
-    private void getObjectStruct(){
+    private void getObjectStruct() {
+
+        if (checkInputFreq()) {
+            showWarningInputFreq();
+        }
         try {
             JSONObject jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
             JSONObject jsonObjects = jsonObject.getJSONObject("objects");
@@ -269,27 +271,26 @@ public class UpdateObjectActivity extends BaseActivity {
 
 
             //add Occur date
-            fields.add(new ObjectField("occur_date","Occur date","d","d"));
-            if(type.equals("EU")){
+            fields.add(new ObjectField("occur_date", "Occur date", "d", "d"));
+            if (type.equals("EU")) {
                 //Lay thong tin de tao name cho event_phase
                 JSONArray jsonEvent = jsonList.getJSONArray("CODE_EVENT_TYPE");
                 JSONArray jsonPhase = jsonList.getJSONArray("CODE_FLOW_PHASE");
                 //Tao danh sach event  - phase tu Json
                 List<ObjectList> eventList = new ArrayList<>();
                 List<ObjectList> phaseList = new ArrayList<>();
-                for(int i = 0;i<jsonEvent.length();i++){
+                for (int i = 0; i < jsonEvent.length(); i++) {
                     JSONObject values = jsonEvent.getJSONObject(i);
                     String key = values.getString("value");
                     String value = values.getString("text");
-                    eventList.add(new ObjectList(key,value));
+                    eventList.add(new ObjectList(key, value));
                 }
-                for(int i = 0;i<jsonPhase.length();i++){
+                for (int i = 0; i < jsonPhase.length(); i++) {
                     JSONObject values = jsonPhase.getJSONObject(i);
                     String key = values.getString("value");
                     String value = values.getString("text");
-                    phaseList.add(new ObjectList(key,value));
+                    phaseList.add(new ObjectList(key, value));
                 }
-
 
 
                 List<EventPhase> eventPhases = new ArrayList<>();
@@ -304,32 +305,32 @@ public class UpdateObjectActivity extends BaseActivity {
 
                     while (keys.hasNext()) {//event - key  & con cua event la danh sach phase
                         String key = keys.next();
-                        if(jsonEventPhase.get(key) instanceof JSONArray) {
+                        if (jsonEventPhase.get(key) instanceof JSONArray) {
                             JSONArray innerJObject = jsonEventPhase.getJSONArray(key);
-                            for(int i=0;i<innerJObject.length();i++) {
+                            for (int i = 0; i < innerJObject.length(); i++) {
                                 String phase = innerJObject.getString(i);
                                 //Lay name dua vao event_id = phase_id
                                 String name = "";
-                                try{
+                                try {
                                     //Tim kiem ten event trong danh sach event
-                                    for(ObjectList item:eventList){
-                                        if(item.getId().equals(key)) {
+                                    for (ObjectList item : eventList) {
+                                        if (item.getId().equals(key)) {
                                             name = item.getName() + " ";
                                             break;
                                         }
                                     }
 
                                     //Tim kiem ten phase trong danh sach phase
-                                    for(ObjectList item2:phaseList){
-                                        if(item2.getId().equals(phase)) {
+                                    for (ObjectList item2 : phaseList) {
+                                        if (item2.getId().equals(phase)) {
                                             name += item2.getName();
-                                           break;
+                                            break;
                                         }
                                     }
 
                                     eventPhases.add(new EventPhase(key, phase, name));
 //                                    name = jsonEvent.getString(key)+" "+jsonPhase.getString(phase);
-                                }catch (Exception e){
+                                } catch (Exception e) {
 
                                 }
 
@@ -340,20 +341,20 @@ public class UpdateObjectActivity extends BaseActivity {
                 }
 
                 //Neu la EU add rieng operation
-                fields.add(new ObjectField("operation","Operation","l","l",eventPhases));
+                fields.add(new ObjectField("operation", "Operation", "l", "l", eventPhases));
             }
 
             //add cac field trong object_attrs
             for (int i = 0; i < jsonType.length(); i++) {
-                ObjectField field= new ObjectField(jsonType.getJSONObject(i),jsonList);
-                if(!field.getControlType().isEmpty()&&!field.getControlType().equals("null")) {
+                ObjectField field = new ObjectField(jsonType.getJSONObject(i), jsonList);
+                if (!field.getControlType().isEmpty() && !field.getControlType().equals("null")) {
                     fields.add(field);
                 }
             }
             //Cap nhat value cho cac field
 
 
-            updateFieldValue(jsonObject,0);
+            updateFieldValue(jsonObject, 0);
             updateValue();
 
 
@@ -362,40 +363,49 @@ public class UpdateObjectActivity extends BaseActivity {
         }
     }
 
-    private void updateFieldValue(JSONObject jsonObject, int resetFromPosition){
+    private boolean checkInputFreq() {
+        int day = Integer.valueOf(MyUtils.getCurrentDate().split("-")[2]);
+        return detailObjects.get(currentObjectPosition).getInputFreq().equals("MON") && day != 1;
+    }
+
+    private void showWarningInputFreq() {
+        showDialogMessage("Warning", "Only update the first day of the month");
+    }
+
+    private void updateFieldValue(JSONObject jsonObject, int resetFromPosition) {
         try {
-            resetFromPosition+=1;
+            resetFromPosition += 1;
             //Du lieu da luu tru
             JSONObject jsonObjectDetail = jsonObject.getJSONObject("object_details");
             JSONObject object = null;
             try {
                 object = jsonObjectDetail.getJSONObject(getCurrentKey());
 
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
-            if(object!=null){
-                for(int i =resetFromPosition;i<fields.size();i++){
+            if (object != null) {
+                for (int i = resetFromPosition; i < fields.size(); i++) {
                     ObjectField field = fields.get(i);
                     String value = "";
-                    try{
-                        value =  object.getString(field.getKey());
+                    try {
+                        value = object.getString(field.getKey());
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
 
                     }
                     //Neu gia tri  = rong cho list thi value  = gia tri dau tien
-                    if(value.isEmpty() && field.getControlType().equals("l")){
-                       value = field.getList().get(0).getId();
+                    if (value.isEmpty() && field.getControlType().equals("l")) {
+                        value = field.getList().get(0).getId();
                     }
                     field.setValue(value);
                 }
                 try {
                     objectFieldAdapter.notifyItemRangeChanged(resetFromPosition, fields.size() - resetFromPosition);
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
-            }else{
+            } else {
 
                 resetAllField(resetFromPosition);
             }
@@ -403,9 +413,10 @@ public class UpdateObjectActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
-    private void updateValue(){
 
-        objectFieldAdapter = new ObjectFieldAdapter(this,type, currentObjectId,fields, new UpdateFieldListener() {
+    private void updateValue() {
+
+        objectFieldAdapter = new ObjectFieldAdapter(this, type, currentObjectId, fields, new UpdateFieldListener() {
             @Override
             public void changeValue(int position, ObjectField objectField) {
 
@@ -416,27 +427,26 @@ public class UpdateObjectActivity extends BaseActivity {
                 }
 
 
-
-                fields.set(position,objectField);
-                if(position==0){//Change orcurdate
+                fields.set(position, objectField);
+                if (position == 0) {//Change orcurdate
 //                    updateFieldValue(jsonObject,1);
-                    if(type.equals("EU")) {
+                    if (type.equals("EU")) {
                         updateFieldValue(jsonObject, 1);
-                    }else{
+                    } else {
                         updateFieldValue(jsonObject, 0);
                     }
 //                    currentEventPhasePosition = 0;
-                }else if(type.equals("EU")&&position==1){
+                } else if (type.equals("EU") && position == 1) {
                     //Neu La EU thi xac dinh vi tri (value = phase_event)
                     String value = objectField.getValue();
                     List<EventPhase> eventPhases = objectField.getEventPhases();
-                    for(int i=0;i<eventPhases.size();i++){
+                    for (int i = 0; i < eventPhases.size(); i++) {
                         EventPhase eventPhase = eventPhases.get(i);
-                        if(eventPhase.getPhaseEvent().equals(value)){
+                        if (eventPhase.getPhaseEvent().equals(value)) {
                             currentEventPhasePosition = i;
                         }
                     }
-                    updateFieldValue(jsonObject,position);
+                    updateFieldValue(jsonObject, position);
                 }
             }
         });
@@ -444,14 +454,14 @@ public class UpdateObjectActivity extends BaseActivity {
 
     }
 
-    private String getCurrentKey(){
+    private String getCurrentKey() {
         String date = fields.get(0).getValue();
-        if(date.isEmpty()){
+        if (date.isEmpty()) {
             date = MyUtils.getCurrentDate();
         }
-        String result = currentObjectId+"_"+date;
-        if(type.equals("EU")){
-            result+="_"+fields.get(1).getEventPhases().get(currentEventPhasePosition).getPhaseEvent();
+        String result = currentObjectId + "_" + date;
+        if (type.equals("EU")) {
+            result += "_" + fields.get(1).getEventPhases().get(currentEventPhasePosition).getPhaseEvent();
         }
         return result;
     }

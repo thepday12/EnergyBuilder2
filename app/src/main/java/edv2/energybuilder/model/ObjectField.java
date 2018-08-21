@@ -24,10 +24,13 @@ public class ObjectField {
     private boolean enable = false;
     private boolean mandatory = false;
     private String value = "";
+    private String format = "";
+    private int decimals = 0;
+
     private List<ObjectList> list = new ArrayList<>();
     private List<EventPhase> eventPhases = new ArrayList<>();
 
-    public ObjectField(String key,String name, String dataType, String controlType) {
+    public ObjectField(String key, String name, String dataType, String controlType) {
         this.key = key;
         this.name = name;
         this.dataType = dataType;
@@ -43,7 +46,7 @@ public class ObjectField {
      * @param controlType
      * @param eventPhases list du lieu day du
      */
-    public ObjectField(String key,String name, String dataType, String controlType,List<EventPhase> eventPhases) {
+    public ObjectField(String key, String name, String dataType, String controlType, List<EventPhase> eventPhases) {
         this.key = key;
         this.name = name;
         this.dataType = dataType;
@@ -51,8 +54,8 @@ public class ObjectField {
         this.enable = true;
         this.eventPhases = eventPhases;
         List<ObjectList> tmpLists = new ArrayList<>();
-        for(EventPhase eventPhase:eventPhases){
-            tmpLists.add(new ObjectList(eventPhase.getPhaseEvent(),eventPhase.getName()));
+        for (EventPhase eventPhase : eventPhases) {
+            tmpLists.add(new ObjectList(eventPhase.getPhaseEvent(), eventPhase.getName()));
         }
         this.value = tmpLists.get(0).getId();
         this.list = tmpLists;
@@ -83,13 +86,13 @@ public class ObjectField {
         try {
             controlType = jsonObject.getString("control_type");
 
-            if(controlType.equals("l")){
+            if (controlType.equals("l")) {
                 JSONArray json = jsonList.getJSONArray(jsonObject.getString("list"));
-                for(int i =0;i<json.length();i++){
+                for (int i = 0; i < json.length(); i++) {
                     JSONObject values = json.getJSONObject(i);
                     String key = values.getString("value");
                     String value = values.getString("text");
-                    list.add(new ObjectList(key,value));
+                    list.add(new ObjectList(key, value));
                 }
 
             }
@@ -104,9 +107,14 @@ public class ObjectField {
             mandatory = jsonObject.getBoolean("mandatory");
         } catch (JSONException e) {
         }
-
-
-
+        try {
+            format = jsonObject.getString("format");
+        } catch (JSONException e) {
+        }
+        try {
+            decimals = jsonObject.getInt("decimals");
+        } catch (JSONException e) {
+        }
 
 
     }
@@ -184,22 +192,38 @@ public class ObjectField {
         this.list = list;
     }
 
-    public String getFieldData(){
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public int getDecimals() {
+        return decimals;
+    }
+
+    public void setDecimals(int decimals) {
+        this.decimals = decimals;
+    }
+
+    public String getFieldData() {
         String jsonString = "";
-        if(!value.isEmpty()){
-            if(controlType.equals("l")){
+        if (!value.isEmpty()) {
+            if (controlType.equals("l")) {
                 String tmpValue = "";
-                for(ObjectList objectList:list){
-                    if(objectList.getId().equals(value)){
+                for (ObjectList objectList : list) {
+                    if (objectList.getId().equals(value)) {
                         tmpValue = objectList.getId();
                         break;
                     }
                 }
                 jsonString = "\"" + key + "\":\"" + tmpValue + "\"";
-                Log.e("VLLL",jsonString);
-            }else if(controlType.equals("n")){
+                Log.e("VLLL", jsonString);
+            } else if (controlType.equals("n")) {
                 jsonString = "\"" + key + "\":\"" + MyUtils.formatDecimalValue(value) + "\"";//Format cac quoc gia la khac nhau
-            }else {
+            } else {
                 jsonString = "\"" + key + "\":\"" + value + "\"";
             }
         }

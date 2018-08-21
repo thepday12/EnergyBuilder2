@@ -10,6 +10,7 @@ public class ObjectData {
     private String id = "";
     private String type = "";
     private String name = "";
+    private String inputFreq = "";
     private String eventPhases = "";
 
     public ObjectData(String key, JSONObject jsonObject) {
@@ -24,6 +25,11 @@ public class ObjectData {
 
         try {
             name = jsonObject.getString("name");
+        } catch (JSONException e) {
+        }
+
+        try {
+            inputFreq = jsonObject.getString("input_freq");
         } catch (JSONException e) {
         }
 
@@ -84,6 +90,22 @@ public class ObjectData {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getInputFreq() {
+        return inputFreq;
+    }
+
+    public void setInputFreq(String inputFreq) {
+        this.inputFreq = inputFreq;
+    }
+
+    public String getEventPhases() {
+        return eventPhases;
+    }
+
+    public void setEventPhases(String eventPhases) {
+        this.eventPhases = eventPhases;
     }
 }
 

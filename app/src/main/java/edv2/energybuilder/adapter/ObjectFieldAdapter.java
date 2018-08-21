@@ -131,7 +131,7 @@ public class ObjectFieldAdapter extends RecyclerView
             holder.etField.setFilters(filterArray);
             holder.tvTitle.setTextColor(Color.parseColor("#2196F3"));
 
-            holder.etField.setText(MyUtils.formatDecimalValueWithLocation(object.getValue()));
+            holder.etField.setText(MyUtils.formatDecimalValueWithLocation(object.getValue(),object.getDecimals()));
 
 
 
@@ -181,7 +181,7 @@ public class ObjectFieldAdapter extends RecyclerView
                         }
 
                         if(yVals.size()>0) {
-                            showChartDialog(object.getName(),tmp,yVals);
+                            showChartDialog(object.getName(),tmp,yVals,object.getDecimals());
                         }
 
                     } catch (JSONException e) {
@@ -307,7 +307,7 @@ public class ObjectFieldAdapter extends RecyclerView
 
     }
 
-    private void showChartDialog(String title,final List<ValueAndDate> dateList, ArrayList yVals) {
+    private void showChartDialog(String title,final List<ValueAndDate> dateList, ArrayList yVals,int decimals) {
         // custom dialog
         final Dialog dialog = new Dialog(mActivity);
         dialog.setCanceledOnTouchOutside(false);
@@ -348,7 +348,7 @@ public class ObjectFieldAdapter extends RecyclerView
         lineChart.getDescription().setEnabled(false);
 
         LineDataSet set = new LineDataSet(yVals, null);
-        set.setValueFormatter(new MyValueFormatter());
+        set.setValueFormatter(new MyValueFormatter(decimals));
         lineChart.getXAxis().setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {

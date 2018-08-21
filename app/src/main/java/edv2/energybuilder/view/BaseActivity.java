@@ -1,5 +1,6 @@
 package edv2.energybuilder.view;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -299,6 +300,23 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.cancel, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+    public void showDialogMessage(String title, String message) {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(BaseActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(BaseActivity.this);
+        }
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok,null)
+                .setIcon(android.R.drawable.ic_dialog_alert);
+
+        Dialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
     }
 
     protected void resetPoint(Point point){

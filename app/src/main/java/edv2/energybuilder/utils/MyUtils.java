@@ -71,7 +71,12 @@ public class MyUtils {
         return result;
     }
 
-    public static String formatDecimalValueWithLocation(String number){
+    public static String formatDecimalValueWithLocation(String number,int decimals){
+        if(number.isEmpty()){
+            return number;
+        }
+        String format = "%."+decimals+"f";
+        number = String.format(format, Float.valueOf(number));
         NumberFormat nf = NumberFormat.getInstance();
         String decSeparator = ".";
         if (nf instanceof DecimalFormat) {
