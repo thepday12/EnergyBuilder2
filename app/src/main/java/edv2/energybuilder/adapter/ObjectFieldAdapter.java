@@ -118,6 +118,11 @@ public class ObjectFieldAdapter extends RecyclerView
         holder.tvTitle.setText(title);
         holder.tvTitle.setTextColor(Color.BLACK);
         holder.tvTitle.setOnClickListener(null);
+
+        holder.etField.setEnabled(object.isEnable());
+        holder.spinnerField.setEnabled(object.isEnable());
+        holder.rlDate.setEnabled(object.isEnable());
+
         if(object.getControlType().equals("n")){
 
 

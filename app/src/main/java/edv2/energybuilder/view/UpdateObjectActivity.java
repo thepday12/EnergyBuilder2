@@ -48,7 +48,7 @@ public class UpdateObjectActivity extends BaseActivity {
 
     private List<String> visibleObjects = new ArrayList<>();
     private List<ObjectData> detailObjects = new ArrayList<>();
-    private List<ObjectField> fields;
+    private List<ObjectField> fields  = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -246,6 +246,7 @@ public class UpdateObjectActivity extends BaseActivity {
 //        } catch (JSONException e) {
 //
 //        }
+        updateFieldsWidthInputFreq();
         try {
             objectFieldAdapter.notifyItemRangeChanged(start, fields.size() - start);
         } catch (Exception e) {
@@ -256,9 +257,8 @@ public class UpdateObjectActivity extends BaseActivity {
 
     private void getObjectStruct() {
 
-        if (checkInputFreq()) {
-            showWarningInputFreq();
-        }
+
+
         try {
             JSONObject jsonObject = new JSONObject(mySharedPreferences.getDataConfig());
             JSONObject jsonObjects = jsonObject.getJSONObject("objects");
@@ -354,6 +354,8 @@ public class UpdateObjectActivity extends BaseActivity {
             //Cap nhat value cho cac field
 
 
+
+
             updateFieldValue(jsonObject, 0);
             updateValue();
 
@@ -364,12 +366,32 @@ public class UpdateObjectActivity extends BaseActivity {
     }
 
     private boolean checkInputFreq() {
-        int day = Integer.valueOf(MyUtils.getCurrentDate().split("-")[2]);
+
+        String date = "";
+        if(fields.size()>0) {
+            date = fields.get(0).getValue();
+        }
+        if (date.isEmpty()) {
+            date = MyUtils.getCurrentDate();
+        }
+        int day = Integer.valueOf(date.split("-")[2]);
         return detailObjects.get(currentObjectPosition).getInputFreq().equals("MON") && day != 1;
     }
 
     private void showWarningInputFreq() {
         showDialogMessage("Warning", "Only update the first day of the month");
+    }
+
+    /***
+     * Cap nhat trang thai voi truong hop input_freq = MON va ngay khac ngay 01
+     */
+    private void updateFieldsWidthInputFreq(){
+        final boolean isEnable = !checkInputFreq();
+        for (int i = 1; i < fields.size(); i++) {
+            ObjectField field =  fields.get(i);
+            field.setEnable(isEnable);
+            fields.set(i,field);
+        }
     }
 
     private void updateFieldValue(JSONObject jsonObject, int resetFromPosition) {
@@ -400,13 +422,14 @@ public class UpdateObjectActivity extends BaseActivity {
                     }
                     field.setValue(value);
                 }
+
+                updateFieldsWidthInputFreq();
                 try {
                     objectFieldAdapter.notifyItemRangeChanged(resetFromPosition, fields.size() - resetFromPosition);
                 } catch (Exception e) {
 
                 }
             } else {
-
                 resetAllField(resetFromPosition);
             }
         } catch (JSONException e) {
@@ -414,7 +437,11 @@ public class UpdateObjectActivity extends BaseActivity {
         }
     }
 
+
     private void updateValue() {
+
+
+
 
         objectFieldAdapter = new ObjectFieldAdapter(this, type, currentObjectId, fields, new UpdateFieldListener() {
             @Override
